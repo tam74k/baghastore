@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>باغة ستور - استطلاع رأي زيارة مغسلة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: {} } }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap');
+        body { font-family: 'Cairo', sans-serif !important; background-color: #111827 !important; color: #ffffff !important; -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; }
+        * { color-scheme: light !important; -webkit-print-color-adjust: exact !important; color-adjust: exact !important; print-color-adjust: exact !important; }
+        .gradient-bg { background: linear-gradient(135deg, #c0da3a 0%, #000000 100%) !important; }
+        .card-shadow { box-shadow: 0 20px 25px -5px rgba(0,0,0,.1), 0 10px 10px -5px rgba(0,0,0,.04) !important; }
+        .input-focus:focus { transform: translateY(-2px); transition: all .3s ease !important; }
+        .radio-custom { appearance: none !important; width: 20px; height: 20px; border: 2px solid #d1d5db !important; border-radius: 50%; position: relative; cursor: pointer; transition: all .3s ease !important; background-color: #ffffff !important; }
+        .radio-custom:checked { border-color: #c0da3a !important; background-color: #c0da3a !important; }
+        .radio-custom:checked::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; background-color: #fff !important; border-radius: 50%; }
+        .btn-submit { background: linear-gradient(135deg, #c0da3a 0%, #000000 100%) !important; transition: all .3s ease !important; color: #ffffff !important; }
+        .btn-submit:hover { transform: translateY(-2px) !important; box-shadow: 0 10px 20px rgba(192, 218, 58, .3) !important; }
+        .progress-bar { transition: width .5s ease !important; }
+        .hidden-force { display: none !important; }
+        .whatsapp-btn { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important; transition: all .3s ease !important; animation: pulse-whatsapp 2s infinite !important; color: #ffffff !important; }
+        .whatsapp-btn:hover { transform: translateY(-3px) scale(1.05) !important; box-shadow: 0 15px 35px rgba(37, 211, 102, .4) !important; }
+        @keyframes pulse-whatsapp { 0%, 100% { box-shadow: 0 10px 25px rgba(37, 211, 102, .3) !important; } 50% { box-shadow: 0 15px 35px rgba(37, 211, 102, .5) !important; } }
+        input, textarea, button, select { -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; background-color: rgba(255,255,255,0.1) !important; border-color: rgba(255,255,255,0.3) !important; color: #ffffff !important; }
+        input::placeholder, textarea::placeholder { color: #9ca3af !important; opacity: 1 !important; }
+        input:focus, textarea:focus, button:focus { border-color: #c0da3a !important; outline: none !important; box-shadow: 0 0 0 3px rgba(192, 218, 58, 0.2) !important; }
+        h1, h2, h3, h4, h5, h6, p, span, label { color: inherit !important; }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <img src="images/logo.png" alt="باغة ستور Logo" class="mx-auto w-32 h-32 md:w-48 md:h-48 object-contain mb-4 card-shadow rounded-full bg-white p-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#c0da3a] mb-4">باغة ستور</h1>
+            <h2 class="text-2xl font-semibold text-white mb-2">استطلاع رأي حول زيارتك لـ باغة ستور</h2>
+            <p class="text-gray-300 text-lg">شكراً لزيارتك، شاركنا رأيك لتحسين خدماتنا</p>
+        </div>
+        <div class="max-w-2xl mx-auto mb-8">
+            <div class="bg-white/10 backdrop-blur-sm rounded-full h-3 card-shadow">
+                <div id="progressBar" class="progress-bar bg-gradient-to-r from-[#c0da3a] to-black h-3 rounded-full" style="width: 0%"></div>
+            </div>
+            <!-- تم تعديل عدد الخطوات إلى 9 -->
+            <p class="text-center text-sm text-gray-300 mt-4"><span id="currentStep">0</span> من 9 خطوات مكتملة</p>
+        </div>
+        <div class="max-w-2xl mx-auto">
+            <form id="surveyForm" class="bg-white/5 backdrop-blur-xl rounded-3xl card-shadow p-8 md:p-12 space-y-8 border border-white/20">
+                <input type="hidden" id="staffNameHidden" name="staffNameHidden" value="">
+                <input type="hidden" id="customerNameHidden" name="customerNameHidden" value="">
+                <input type="hidden" id="phoneHidden" name="phoneHidden" value="">
+                <input type="hidden" id="autoFlags" name="autoFlags" value="">
+
+                <!-- step1 -->
+                <div id="step1" class="form-step">
+                    <label class="block text-2xl font-bold text-white mb-6">رقم الموبايل</label>
+                    <input type="tel" id="phoneNumber" name="phoneNumber" required class="input-focus w-full px-6 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-2xl focus:border-[#c0da3a] focus:outline-none text-xl text-white placeholder-gray-300" placeholder="أدخل رقم الموبايل">
+                </div>
+
+                <!-- step2 -->
+                <div id="step2" class="form-step hidden">
+                    <label class="block text-2xl font-bold text-white mb-6">اسم العميل</label>
+                    <input type="text" id="customerName" name="customerName" required class="input-focus w-full px-6 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-2xl focus:border-[#c0da3a] focus:outline-none text-xl text-white placeholder-gray-300" placeholder="اسمك الكريم">
+                </div>
+
+                <!-- step3 -->
+                <div id="step3" class="form-step hidden">
+                    <label class="block text-2xl font-bold text-white mb-8">هل هذه أول زيارة لك لـ باغة ستور؟</label>
+                    <div class="space-y-4">
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="firstVisit" value="yes" class="radio-custom ml-4"><span class="text-xl text-white">نعم، أول مرة</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="firstVisit" value="no" class="radio-custom ml-4"><span class="text-xl text-white">لا، زيارة سابقة</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- step4 الجديد: ما هي الخدمة التي نفذناها لك ؟ -->
+                <div id="step4" class="form-step hidden">
+                    <label class="block text-2xl font-bold text-white mb-8">ما هي الخدمة التي نفذناها لك ؟</label>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="serviceDone" value="تغيير باغة" class="radio-custom ml-4"><span class="text-xl text-white">تغيير باغة</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="serviceDone" value="صب باغة" class="radio-custom ml-4"><span class="text-xl text-white">صب باغة</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="serviceDone" value="تلميع فوانيس" class="radio-custom ml-4"><span class="text-xl text-white">تلميع فوانيس</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="serviceDone" value="افلام حماية" class="radio-custom ml-4"><span class="text-xl text-white">افلام حماية</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="serviceDone" value="نانو جرافيين" class="radio-custom ml-4"><span class="text-xl text-white">نانو جرافيين</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="serviceDone" value="بوليش" class="radio-custom ml-4"><span class="text-xl text-white">بوليش</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="serviceDone" value="غسيل كيماوي" class="radio-custom ml-4"><span class="text-xl text-white">غسيل كيماوي</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="serviceDone" value="غسيل تفصيلي" class="radio-custom ml-4"><span class="text-xl text-white">غسيل تفصيلي</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="serviceDone" value="غسيل عادي" class="radio-custom ml-4"><span class="text-xl text-white">غسيل عادي</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- step5 (كان step4) -->
+                <div id="step5" class="form-step hidden">
+                    <label class="block text-2xl font-bold text-white mb-8">كيف تقيم جودة الخدمة المقدمة؟</label>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="washQuality" value="excellent" class="radio-custom ml-4"><span class="text-xl text-white">ممتاز ⭐⭐⭐⭐⭐</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="washQuality" value="very-good" class="radio-custom ml-4"><span class="text-xl text-white">جيد جداً ⭐⭐⭐⭐</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="washQuality" value="good" class="radio-custom ml-4"><span class="text-xl text-white">جيد ⭐⭐⭐</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="washQuality" value="fair" class="radio-custom ml-4"><span class="text-xl text-white">مقبول ⭐⭐</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="washQuality" value="poor" class="radio-custom ml-4"><span class="text-xl text-white">ضعيف ⭐</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- step6 (كان step5) -->
+                <div id="step6" class="form-step hidden">
+                    <label class="block text-2xl font-bold text-white mb-8">كيف كان وقت الانتظار؟</label>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="waitingTime" value="very-short" class="radio-custom ml-4"><span class="text-xl text-white">مناسب</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="waitingTime" value="acceptable" class="radio-custom ml-4"><span class="text-xl text-white">مقبول</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="waitingTime" value="long" class="radio-custom ml-4"><span class="text-xl text-white">طويل</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- step7 (كان step6) -->
+                <div id="step7" class="form-step hidden">
+                    <label class="block text-2xl font-bold text-white mb-8">تقييم تعامل الموظفين</label>
+                    <div class="space-y-3">
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="staffService" value="excellent" class="radio-custom ml-4"><span class="text-xl text-white">ممتاز ⭐⭐⭐⭐⭐</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="staffService" value="very-good" class="radio-custom ml-4"><span class="text-xl text-white">جيد جداً ⭐⭐⭐⭐</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="staffService" value="good" class="radio-custom ml-4"><span class="text-xl text-white">جيد ⭐⭐⭐</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="staffService" value="fair" class="radio-custom ml-4"><span class="text-xl text-white">مقبول ⭐⭐</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="staffService" value="poor" class="radio-custom ml-4"><span class="text-xl text-white">ضعيف ⭐</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- step8 (كان step7) -->
+                <div id="step8" class="form-step hidden">
+                    <label class="block text-2xl font-bold text-white mb-8">هل توصي بـ باغة ستور للآخرين؟</label>
+                    <div class="space-y-4">
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="recommendation" value="definitely" class="radio-custom ml-4"><span class="text-xl text-white">بالتأكيد 👍</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="recommendation" value="probably" class="radio-custom ml-4"><span class="text-xl text-white">من المحتمل 👍</span>
+                        </label>
+                        <label class="flex items-center p-6 border-2 border-white/20 rounded-2xl cursor-pointer hover:border-[#c0da3a] hover:bg-white/5 transition-all">
+                            <input type="radio" name="recommendation" value="definitely-not" class="radio-custom ml-4"><span class="text-xl text-white">لا أوصي 👎</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- step9 (كان step8) -->
+                <div id="step9" class="form-step hidden">
+                    <label class="block text-2xl font-bold text-white mb-6">اقتراحاتك للتحسين (اختياري)</label>
+                    <p class="text-gray-300 mb-6 text-lg">يرجى مشاركة أي مقترحات أو ملاحظات لتحسين خدمات باغة ستور</p>
+                    <textarea id="suggestions" name="suggestions" rows="5" class="input-focus w-full px-6 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 rounded-2xl focus:border-[#c0da3a] focus:outline-none text-xl text-white resize-none placeholder-gray-300" placeholder="اكتب اقتراحاتك هنا..."></textarea>
+                </div>
+
+                <div class="flex justify-between pt-12">
+                    <button type="button" id="prevBtn" class="hidden px-8 py-4 bg-white/10 text-white border border-white/30 rounded-2xl hover:bg-white/20 transition-all font-bold text-lg">السابق</button>
+                    <button type="button" id="nextBtn" class="px-12 py-4 btn-submit text-xl font-bold rounded-2xl">التالي</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="shareSection" class="hidden max-w-2xl mx-auto mt-16 px-4">
+        <div class="bg-gradient-to-br from-[#c0da3a]/10 to-black/20 backdrop-blur-xl rounded-3xl p-12 text-center card-shadow border-2 border-[#c0da3a]/30">
+            <div class="mb-8">
+                <h2 class="text-3xl md:text-4xl font-bold text-[#c0da3a] mb-4 flex items-center justify-center gap-3">🎉 شكراً لك!</h2>
+                <p class="text-xl text-white mb-6">تم إرسال استطلاع رأيك بنجاح</p>
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8">
+                    <p class="text-lg text-gray-200">سنستخدم تعليقاتك لتحسين خدماتنا 🤝</p>
+                </div>
+            </div>
+            <div class="space-y-6">
+                <p class="text-2xl font-bold text-white mb-8 bg-black/20 px-6 py-4 rounded-2xl">🎁 شاركنا مع الأهل والأصدقاء <br><span class="text-[#c0da3a] text-lg">واحصل على خصم في زيارتك القادمة!</span></p>
+                <a href="#" id="whatsappShareBtn" class="whatsapp-btn block max-w-sm mx-auto px-8 py-6 rounded-3xl text-2xl font-bold text-white shadow-2xl">
+                    <div class="flex items-center justify-center gap-4">
+                        <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/></svg>
+                        <span>شارك على واتساب</span>
+                    </div>
+                </a>
+                <p class="text-sm text-gray-400">📱 سيتم فتح واتساب تلقائياً مع الرسالة الجاهزة</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep=1;
+        const totalSteps=9; // كان 8 وأصبح 9
+        const nextBtn=document.getElementById('nextBtn');
+        const prevBtn=document.getElementById('prevBtn');
+        const progressBar=document.getElementById('progressBar');
+        const currentStepSpan=document.getElementById('currentStep');
+        const form=document.getElementById('surveyForm');
+        const shareSection=document.getElementById('shareSection');
+        const hiddenStaff=document.getElementById('staffNameHidden');
+        const hiddenCustomer=document.getElementById('customerNameHidden');
+        const hiddenPhone=document.getElementById('phoneHidden');
+        const autoFlagsInput=document.getElementById('autoFlags');
+        const whatsappBtn=document.getElementById('whatsappShareBtn');
+
+        function shareOnWhatsApp(){
+            const message=`حبيت أشارككم مكان جامد جربته اليومين اللي فاتوا:
+باغة ستور PROTECT & DETAIL
+بيقدم خدمات العناية بالسيارة بشكل روعة
+Car Polishing, Nano, Detailing.
+
+العنوان: الشيخ زايد – مول A PLAZA
+ده اللوكيشن:
+[https://maps.app.goo.gl/FpNu6KzUnX58qmuW7?g_st=aw](https://maps.app.goo.gl/FpNu6KzUnX58qmuW7?g_st=aw)
+
+جربوه ومش هتندموا ✨`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`,'_blank');
+        }
+        whatsappBtn.addEventListener('click',function(e){e.preventDefault();shareOnWhatsApp();});
+
+        function updateProgress(){
+            const progress=((currentStep-1)/totalSteps)*100;
+            progressBar.style.width=progress+'%';
+            currentStepSpan.textContent=currentStep-1;
+        }
+
+        function showStep(step){
+            document.querySelectorAll('.form-step').forEach(s=>s.classList.add('hidden'));
+            const stepEl=document.getElementById('step'+step);
+            if(stepEl)stepEl.classList.remove('hidden');
+            if(step===1)prevBtn.classList.add('hidden');
+            else prevBtn.classList.remove('hidden');
+            if(step===totalSteps){
+                nextBtn.textContent='إرسال الاستطلاع';
+                nextBtn.classList.remove('btn-submit');
+                nextBtn.style.background='linear-gradient(135deg, #c0da3a 0%, #000000 100%)';
+            }else{
+                nextBtn.textContent='التالي';
+                nextBtn.classList.add('btn-submit');
+                nextBtn.style.background='';
+            }
+            updateProgress();
+        }
+
+        function validateCurrentStep(){
+            const currentStepElement=document.getElementById('step'+currentStep);
+            if(currentStep===1){
+                const phoneNumber=document.getElementById('phoneNumber').value.trim();
+                return phoneNumber.length>5;
+            }else if(currentStep===2){
+                const customerName=document.getElementById('customerName').value.trim();
+                return customerName.length>1;
+            }else if(currentStep===9){
+                return true;
+            }else{
+                const inputs=currentStepElement.querySelectorAll('input[type="radio"]');
+                if(!inputs.length)return true;
+                const groupName=inputs[0].name;
+                return document.querySelector(`input[name="${groupName}"]:checked`)!==null;
+            }
+        }
+
+        nextBtn.addEventListener('click',function(){
+            if(!validateCurrentStep()){
+                alert('يرجى ملء جميع الحقول المطلوبة');
+                return;
+            }
+            if(currentStep===totalSteps){
+                submitSurvey();
+            }else{
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        function submitSurvey(){
+            nextBtn.disabled=true;
+            nextBtn.textContent='جاري الإرسال...';
+            const urlFilled=JSON.parse(autoFlagsInput.value||'{}');
+            const effectiveCustomerName=hiddenCustomer.value||document.getElementById('customerName').value.trim();
+            const effectivePhone=hiddenPhone.value||document.getElementById('phoneNumber').value.trim();
+            const formData={
+                customerName:effectiveCustomerName,
+                phoneNumber:effectivePhone,
+                staffName:hiddenStaff.value||null,
+                firstVisit:document.querySelector('input[name="firstVisit"]:checked')?.value,
+                serviceDone:document.querySelector('input[name="serviceDone"]:checked')?.value,
+                washQuality:document.querySelector('input[name="washQuality"]:checked')?.value,
+                waitingTime:document.querySelector('input[name="waitingTime"]:checked')?.value,
+                staffService:document.querySelector('input[name="staffService"]:checked')?.value,
+                recommendation:document.querySelector('input[name="recommendation"]:checked')?.value,
+                suggestions:document.getElementById('suggestions').value.trim(),
+                submissionDate:new Date().toISOString(),
+                business:'باغة ستور',
+                meta:{autoFilled:urlFilled}
+            };
+            fetch('https://n8n.101488.xyz/webhook/باغة ستورSurvey',{
+                method:'POST',
+                headers:{'Content-Type':'application/json'},
+                body:JSON.stringify(formData)
+            }).then(response=>{
+                if(response.ok){
+                    form.classList.add('hidden');
+                    shareSection.classList.remove('hidden');
+                    progressBar.style.width='100%';
+                    currentStepSpan.textContent=totalSteps;
+                }else{
+                    throw new Error('فشل في الإرسال');
+                }
+            }).catch(error=>{
+                console.error('Error:',error);
+                alert('حدث خطأ في الإرسال، حاول مرة أخرى');
+            }).finally(()=>{
+                nextBtn.disabled=false;
+            });
+        }
+
+        prevBtn.addEventListener('click',function(){
+            if(currentStep>1){
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        document.getElementById('phoneNumber').addEventListener('keypress',function(e){
+            if(e.key==='Enter')nextBtn.click();
+        });
+        document.getElementById('customerName').addEventListener('keypress',function(e){
+            if(e.key==='Enter')nextBtn.click();
+        });
+
+        document.querySelectorAll('input[type="radio"]').forEach(radio=>{
+            radio.addEventListener('change',function(){
+                setTimeout(()=>{
+                    if(currentStep<totalSteps){
+                        nextBtn.click();
+                    }
+                },300);
+            });
+        });
+
+        function getURLParamByKeys(keys){
+            const params=new URLSearchParams(window.location.search);
+            for(const k of keys){
+                const v=params.get(k);
+                if(v&&String(v).trim())return String(v).trim();
+            }
+            return null;
+        }
+
+        function normalizePhone(value){
+            let digits=String(value).replace(/\D/g,'');
+            if(digits.startsWith('00965')){
+                digits=digits.slice(5);
+            }else if(digits.startsWith('965')){
+                digits=digits.slice(3);
+            }
+            if(digits.length>8){
+                digits=digits.slice(-8);
+            }
+            return digits;
+        }
+
+        function sanitizeName(value){
+            const v=String(value).trim();
+            const cleaned=v.replace(/[^\x00-\x7FÀ-ÿأ-ي\s]/g,'');
+            return cleaned.slice(0,80);
+        }
+
+        function prefillFromURL(){
+            const phoneRaw=getURLParamByKeys(['phoneNumber','phone','ph','mobile','msisdn']);
+            const staffRaw=getURLParamByKeys(['staff','staffName','staffname','s']);
+            const customerRaw=getURLParamByKeys(['customer','customerName','name','p','client']);
+            let flags={phoneFromURL:false,customerFromURL:false,staffFromURL:false};
+
+            if(phoneRaw){
+                const normalized=normalizePhone(phoneRaw);
+                document.getElementById('phoneNumber').value=normalized;
+                hiddenPhone.value=normalized;
+                flags.phoneFromURL=true;
+                document.getElementById('step1').classList.add('hidden-force');
+            }
+            if(staffRaw){
+                const staff=sanitizeName(staffRaw);
+                if(staff){
+                    hiddenStaff.value=staff;
+                    flags.staffFromURL=true;
+                }
+            }
+            if(customerRaw){
+                const customer=sanitizeName(customerRaw);
+                if(customer){
+                    document.getElementById('customerName').value=customer;
+                    hiddenCustomer.value=customer;
+                    flags.customerFromURL=true;
+                    document.getElementById('step2').classList.add('hidden-force');
+                }
+            }
+
+            autoFlagsInput.value=JSON.stringify(flags);
+            const phoneValid=!!hiddenPhone.value;
+            const customerProvided=!!hiddenCustomer.value;
+
+            if(phoneValid&&customerProvided){
+                currentStep=3;
+                showStep(3);
+            }else if(phoneValid){
+                currentStep=2;
+                showStep(2);
+            }else{
+                showStep(1);
+            }
+        }
+        prefillFromURL();
+    </script>
+</body>
+</html>
